@@ -139,68 +139,6 @@ export default function Home() {
     }
   };
 
-  // Format time for display
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  // Parse time input into seconds
-  const parseTimeInput = (input: string): number => {
-    const parts = input.split(":");
-    if (parts.length === 2) {
-      const mins = parseInt(parts[0], 10) || 0;
-      const secs = parseInt(parts[1], 10) || 0;
-      return mins * 60 + secs;
-    }
-    return 900; // Default to 15 minutes
-  };
-
-  // Handle timer input change
-  const handleTimerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTimerInput(e.target.value);
-  };
-
-  // Handle timer input blur
-  const handleTimerInputBlur = () => {
-    const seconds = parseTimeInput(timerInput);
-    setTimeRemaining(seconds);
-    setEditingTimer(false);
-  };
-
-  // Handle timer input key press
-  const handleTimerInputKeyPress = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Enter") {
-      const seconds = parseTimeInput(timerInput);
-      setTimeRemaining(seconds);
-      setEditingTimer(false);
-    } else if (e.key === "Escape") {
-      setTimerInput(formatTime(timeRemaining));
-      setEditingTimer(false);
-    }
-  };
-
-  // Timer functionality
-  const startTimer = () => {
-    setTimerRunning(true);
-  };
-
-  const stopTimer = () => {
-    setTimerRunning(false);
-  };
-
-  const resetTimer = () => {
-    // Reset to the last user-set duration
-    setTimeRemaining(lastSetDuration);
-    setTimerInput(formatTime(lastSetDuration)); // Update the display too
-
-    // Make sure timer is stopped before starting it again
-    setTimerRunning(false);
-  };
-
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement
@@ -465,165 +403,80 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom controls */}
+        {/* Bottom controls - new minimal toolbar */}
         <div
-          className={`border-t ${
-            darkMode ? "border-gray-700" : "border-gray-200"
-          } p-3 flex justify-between items-center transition-opacity duration-300 ${
-            showControls ? "opacity-100" : "opacity-0"
-          }`}
-          onMouseEnter={() => setShowControls(true)}
-          onMouseLeave={() => setShowControls(false)}
+          className="w-full flex justify-between items-center px-8 pb-6 pt-0 select-none"
+          style={{ position: 'absolute', left: 0, bottom: 0, pointerEvents: 'none' }}
         >
-          {/* Font controls */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <select
-                value={fontSize}
-                onChange={(e) => setFontSize(Number(e.target.value))}
-                className={`text-sm ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200 dark-select"
-                    : "bg-transparent"
-                } p-1 rounded border ${
-                  darkMode ? "border-gray-700" : "border-gray-200"
-                }`}
-                style={{
-                  WebkitAppearance: darkMode ? "none" : undefined,
-                  MozAppearance: darkMode ? "none" : undefined,
-                  appearance: darkMode ? "none" : undefined,
-                  backgroundImage: darkMode
-                    ? 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e5e7eb%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")'
-                    : undefined,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.5rem center",
-                  backgroundSize: "0.65em",
-                  paddingRight: darkMode ? "1.5rem" : undefined,
-                }}
-              >
-                {fontSizeOptions.map((size) => (
-                  <option key={size} value={size}>
-                    {size}px
-                  </option>
-                ))}
-              </select>
-              <select
-                value={fontFamily}
-                onChange={(e) => setFontFamily(e.target.value)}
-                className={`text-sm ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-200 dark-select"
-                    : "bg-transparent"
-                } p-1 rounded border ${
-                  darkMode ? "border-gray-700" : "border-gray-200"
-                }`}
-                style={{
-                  WebkitAppearance: darkMode ? "none" : undefined,
-                  MozAppearance: darkMode ? "none" : undefined,
-                  appearance: darkMode ? "none" : undefined,
-                  backgroundImage: darkMode
-                    ? 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23e5e7eb%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")'
-                    : undefined,
-                  backgroundRepeat: "no-repeat",
-                  backgroundPosition: "right 0.5rem center",
-                  backgroundSize: "0.65em",
-                  paddingRight: darkMode ? "1.5rem" : undefined,
-                }}
-              >
-                {fontOptions.map((font) => (
-                  <option key={font.value} value={font.value}>
-                    {font.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Left controls: font size, font family */}
+          <div className="flex items-center text-[15px] font-normal text-gray-400" style={{ pointerEvents: 'auto' }}>
+            {/* Font size (cycle on click) */}
+            <span
+              className={`cursor-pointer transition-colors duration-150 ${' ' + (fontSize ? 'font-semibold text-gray-600' : '')}`}
+              onClick={() => {
+                const currentIdx = fontSizeOptions.indexOf(fontSize);
+                const nextIdx = (currentIdx + 1) % fontSizeOptions.length;
+                setFontSize(fontSizeOptions[nextIdx]);
+              }}
+              title="Click to change font size"
+            >
+              {fontSize}px
+            </span>
+            {/* Dot separator */}
+            <span className="mx-2 text-gray-300 select-none">·</span>
+            {/* Font family options with dot separators */}
+            {fontOptions.map((font, idx) => (
+              <>
+                <span
+                  key={font.value}
+                  className={`cursor-pointer transition-colors duration-150 ${fontFamily === font.value ? 'font-semibold text-gray-600' : ''}`}
+                  onClick={() => setFontFamily(font.value)}
+                >
+                  {font.name}
+                </span>
+                {idx < fontOptions.length - 1 && (
+                  <span className="mx-2 text-gray-300 select-none">·</span>
+                )}
+              </>
+            ))}
           </div>
 
-          <div className="flex items-center space-x-4">
-            {/* Dark Mode toggle */}
-            <button
-              className={`${
-                darkMode
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-500 hover:text-gray-700"
-              } p-1`}
+          {/* Right controls: New Note, Dark Mode, Sidebar toggle (no Fullscreen, no RTL) */}
+          <div className="flex items-center space-x-0 text-[15px] text-gray-400 font-normal" style={{ pointerEvents: 'auto' }}>
+            {/* New Note */}
+            <span
+              className="mx-2 cursor-pointer hover:text-gray-600 transition-colors duration-150"
+              title="New Note"
+              onClick={createNewEntry}
+            >
+              New Note
+            </span>
+            <span className="mx-1 text-gray-300 select-none">·</span>
+            {/* Dark Mode */}
+            <span
+              className="mx-2 cursor-pointer hover:text-gray-600 transition-colors duration-150"
+              title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
               onClick={toggleDarkMode}
-              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {darkMode ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-              )}
-            </button>
-
-            {/* RTL Mode toggle */}
-            <button
-              className={`${
-                darkMode
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-500 hover:text-gray-700"
-              } p-1`}
-              onClick={toggleRtlMode}
-              title={rtlMode ? "Switch to LTR" : "Switch to RTL"}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                  clipRule="evenodd"
-                />
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20" className="inline align-text-bottom">
+                {darkMode ? (
+                  <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" fill="currentColor" />
+                ) : (
+                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" fill="currentColor" />
+                )}
               </svg>
-            </button>
-
+            </span>
+            <span className="mx-1 text-gray-300 select-none">·</span>
             {/* Sidebar toggle */}
-            <button
-              className={`${
-                darkMode
-                  ? "text-gray-400 hover:text-gray-200"
-                  : "text-gray-500 hover:text-gray-700"
-              } p-1`}
+            <span
+              className="mx-2 cursor-pointer hover:text-gray-600 transition-colors duration-150"
+              title={showSidebar ? 'Hide notes' : 'Show notes'}
               onClick={() => setShowSidebar(!showSidebar)}
-              title={showSidebar ? "Hide notes" : "Show notes"}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="inline align-text-bottom">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-            </button>
+            </span>
           </div>
         </div>
       </div>
